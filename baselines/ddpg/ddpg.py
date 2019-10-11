@@ -13,6 +13,11 @@ import baselines.common.tf_util as U
 from baselines import logger
 import numpy as np
 
+
+from torch.utils.tensorboard import SummaryWriter
+import gym_Vibration
+writer = SummaryWriter()
+
 try:
     from mpi4py import MPI
 except ImportError:
@@ -142,13 +147,15 @@ def learn(network, env,
                 # max_action is of dimension A, whereas action is dimension (nenvs, A) - the multiplication gets broadcasted to the batch
                 new_obs, r, done, info = env.step(max_action * action)  # scale for execution in env (as far as DDPG is concerned, every action is in [-1, 1])
                 # note these outputs are batched from vecenv
-
+                # print(new_obs, r, done, info)
+                # print('info: {}'.format(info[0]['NoiseAmplitude']))
                 t += 1
                 if rank == 0 and render:
                     env.render()
+                # env.render()
                 episode_reward += r
                 episode_step += 1
-
+                # print(episode_reward)
                 # Book-keeping.
                 epoch_actions.append(action)
                 epoch_qs.append(q)
@@ -168,7 +175,8 @@ def learn(network, env,
                         episodes += 1
                         if nenvs == 1:
                             agent.reset()
-
+                    # print('done[{}]:{}'.format(d,done[d]))     
+                # print('epoch_episode_rewards:{}'.format(epoch_episode_rewards))            
 
 
             # Train.
@@ -231,6 +239,25 @@ def learn(network, env,
         combined_stats['total/episodes'] = episodes
         combined_stats['rollout/episodes'] = epoch_episodes
         combined_stats['rollout/actions_std'] = np.std(epoch_actions)
+
+
+        writer.add_scalar('Loss/loss_actor', np.mean(epoch_actor_losses), epoch + 1)
+        writer.add_scalar('Loss/loss_critic', np.mean(epoch_critic_losses), epoch + 1)
+
+        writer.add_scalar('Rewards/return', np.mean(epoch_episode_rewards), epoch + 1)
+        writer.add_scalar('Rewards/return_std', np.std(epoch_episode_rewards), epoch + 1)
+        writer.add_scalar('Rewards/return_history', np.mean(episode_rewards_history), epoch + 1)
+        writer.add_scalar('Rewards/return_history_std', np.std(episode_rewards_history), epoch + 1)  
+
+        writer.add_scalar('Rewards/NoiseAmplitude', info[0]['NoiseAmplitude'], epoch + 1)
+        writer.add_scalar('Rewards/VibrationAmplitude', info[0]['VibrationAmplitude'], epoch + 1)  
+
+        writer.add_scalar('actions/actions-real', info[0]['input'], epoch + 1)
+        writer.add_scalar('actions/actions', np.mean(epoch_actions), epoch + 1)
+        writer.add_scalar('actions/actions_std', np.std(epoch_actions), epoch + 1)
+
+
+
         # Evaluation statistics.
         if eval_env is not None:
             combined_stats['eval/return'] = eval_episode_rewards

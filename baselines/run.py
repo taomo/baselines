@@ -49,7 +49,7 @@ _game_envs['retro'] = {
     'SpaceInvaders-Snes',
 }
 
-
+_game_envs['custom_type']={'VibrationEnv-v0'}
 def train(args, extra_args):
     env_type, env_id = get_env_type(args)
     print('env_type: {}'.format(env_type))

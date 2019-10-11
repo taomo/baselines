@@ -6,6 +6,7 @@ from glob import glob
 import csv
 import os.path as osp
 import json
+import numpy as np
 
 class Monitor(Wrapper):
     EXT = "monitor.csv"
@@ -61,7 +62,8 @@ class Monitor(Wrapper):
             self.needs_reset = True
             eprew = sum(self.rewards)
             eplen = len(self.rewards)
-            epinfo = {"r": round(eprew, 6), "l": eplen, "t": round(time.time() - self.tstart, 6)}
+            # epinfo = {"r": round(eprew, 6), "l": eplen, "t": round(time.time() - self.tstart, 6)}
+            epinfo = {"r": np.round(eprew, 6), "l": eplen, "t": np.round(time.time() - self.tstart, 6)}
             for k in self.info_keywords:
                 epinfo[k] = info[k]
             self.episode_rewards.append(eprew)

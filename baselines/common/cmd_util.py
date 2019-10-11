@@ -1,7 +1,7 @@
 """
 Helpers for scripts like run_atari.py.
 """
-
+import gym_Vibration
 import os
 try:
     from mpi4py import MPI
@@ -78,7 +78,8 @@ def make_env(env_id, env_type, mpi_rank=0, subrank=0, seed=None, reward_scale=1.
         gamestate = gamestate or retro.State.DEFAULT
         env = retro_wrappers.make_retro(game=env_id, max_episode_steps=10000, use_restricted_actions=retro.Actions.DISCRETE, state=gamestate)
     else:
-        env = gym.make(env_id, **env_kwargs)
+        env = gym.make(env_id, **env_kwargs) # VibrationEnv-v0
+        # env = gym.make('VibrationEnv-v0') 
 
     if flatten_dict_observations and isinstance(env.observation_space, gym.spaces.Dict):
         keys = env.observation_space.spaces.keys()
