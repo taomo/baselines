@@ -49,7 +49,8 @@ _game_envs['retro'] = {
     'SpaceInvaders-Snes',
 }
 
-_game_envs['custom_type']={'VibrationEnv-v0'}
+# _game_envs['custom_type']={'VibrationEnv-v0'}
+_game_envs['classic_control']={'VibrationEnv-v0'}
 def train(args, extra_args):
     env_type, env_id = get_env_type(args)
     print('env_type: {}'.format(env_type))
@@ -111,7 +112,8 @@ def build_env(args):
 
         flatten_dict_observations = alg not in {'her'}
         env = make_vec_env(env_id, env_type, args.num_env or 1, seed, reward_scale=args.reward_scale, flatten_dict_observations=flatten_dict_observations)
-
+        # print('$$$$$$$$tr')
+        # input()
         if env_type == 'mujoco':
             env = VecNormalize(env, use_tf=True)
 

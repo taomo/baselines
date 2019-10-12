@@ -148,6 +148,11 @@ def learn(network, env,
                 new_obs, r, done, info = env.step(max_action * action)  # scale for execution in env (as far as DDPG is concerned, every action is in [-1, 1])
                 # note these outputs are batched from vecenv
                 # print(new_obs, r, done, info)
+                # env.render()
+
+                if done:
+                    # time.sleep(10)
+                    input()
                 # print('info: {}'.format(info[0]['NoiseAmplitude']))
                 t += 1
                 if rank == 0 and render:
@@ -240,7 +245,7 @@ def learn(network, env,
         combined_stats['rollout/episodes'] = epoch_episodes
         combined_stats['rollout/actions_std'] = np.std(epoch_actions)
 
-
+        
         writer.add_scalar('Loss/loss_actor', np.mean(epoch_actor_losses), epoch + 1)
         writer.add_scalar('Loss/loss_critic', np.mean(epoch_critic_losses), epoch + 1)
 
