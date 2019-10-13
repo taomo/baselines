@@ -152,7 +152,8 @@ def learn(network, env,
 
                 if done:
                     # time.sleep(10)
-                    input()
+                    # input()
+                    pass
                 # print('info: {}'.format(info[0]['NoiseAmplitude']))
                 t += 1
                 if rank == 0 and render:
@@ -260,7 +261,7 @@ def learn(network, env,
         writer.add_scalar('actions/actions-real', info[0]['input'], epoch + 1)
         writer.add_scalar('actions/actions', np.mean(epoch_actions), epoch + 1)
         writer.add_scalar('actions/actions_std', np.std(epoch_actions), epoch + 1)
-
+        
 
 
         # Evaluation statistics.

@@ -79,8 +79,16 @@ def make_env(env_id, env_type, mpi_rank=0, subrank=0, seed=None, reward_scale=1.
         env = retro_wrappers.make_retro(game=env_id, max_episode_steps=10000, use_restricted_actions=retro.Actions.DISCRETE, state=gamestate)
     else:
         env = gym.make(env_id, **env_kwargs) # VibrationEnv-v0
-        # print('#########TETS')
+
+        from baselines.common.wrappers import TimeLimit
+        max_episode_steps = 1000
+        if max_episode_steps is not None:
+            env = TimeLimit(env, max_episode_steps=max_episode_steps)
+
         # input()
+
+        print('#########TETS')
+        input()
         # env = gym.make('VibrationEnv-v0') 
 
     if flatten_dict_observations and isinstance(env.observation_space, gym.spaces.Dict):
@@ -162,10 +170,10 @@ def common_arg_parser():
     Create an argparse.ArgumentParser for run_mujoco.py.
     """
     parser = arg_parser()
-    parser.add_argument('--env', help='environment ID', type=str, default='Reacher-v2')
+    parser.add_argument('--env', help='environment ID', type=str, default='VibrationEnv-v0')  #Reacher-v2
     parser.add_argument('--env_type', help='type of environment, used when the environment type cannot be automatically determined', type=str)
     parser.add_argument('--seed', help='RNG seed', type=int, default=None)
-    parser.add_argument('--alg', help='Algorithm', type=str, default='ppo2')
+    parser.add_argument('--alg', help='Algorithm', type=str, default='ddpg')  #ppo2
     parser.add_argument('--num_timesteps', type=float, default=1e6),
     parser.add_argument('--network', help='network type (mlp, cnn, lstm, cnn_lstm, conv_only)', default=None)
     parser.add_argument('--gamestate', help='game state to load (so far only used in retro games)', default=None)
